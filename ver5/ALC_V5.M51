@@ -1,0 +1,303 @@
+L51 CODE BANKING LINKER/LOCATOR V4.08.06        05/03/110  09:19:13  PAGE  1
+WIN32 L51 CODE BANKING LINKER/LOCATOR V4.08.06,  INVOKED BY:
+L51.EXE f:\p\alc\ver5\main.OBJ,f:\p\sdas_tester\sdas_tt1\sajjad.OBJ  to  F:\P&
+\ALC\VER5\ALC_V5.ABS PR(F:\P\ALC\VER5\ALC_V5.M51) PW(80) RS(256) ix 
+
+
+MEMORY MODEL: SMALL WITHOUT ANY FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED
+  F:\P\ALC\VER5\MAIN.OBJ(MAIN)
+  F:\P\SDAS_TESTER\SDAS_TT1\SAJJAD.OBJ(SAJJAD)
+  C:\FSI\LIB\C51S.LIB(C3S)
+  C:\FSI\LIB\C51S.LIB(MULS)
+  C:\FSI\LIB\C51S.LIB(_C_IDATALEN)
+
+
+LINK MAP OF MODULE: F:\P\ALC\VER5\ALC_V5.ABS (MAIN)
+
+    TYPE     BASE       LENGTH    RELOCATION     SEGMENT NAME
+    ----     ----       ------    ----------     ------------
+
+    * * * * * * *   DATA          M E M O R Y   * * * * * * *
+    REG      0000H      0008H     ABSOLUTE       "REG BANK 0"
+    DATA     0008H      0006H     UNIT           ?DT?MAIN
+    DATA     000EH      0005H     UNIT           ?DT?_DELAY?MAIN
+    IDATA    0013H      0001H     * * STACK * *  _STACK
+
+    * * * * * * *   CODE          M E M O R Y   * * * * * * *
+    CODE     0000H      0003H     ABSOLUTE       
+    CODE     0003H      0019H     UNIT           ?PR?LIB51
+    CODE     001CH      000FH     UNIT           ?PR?C51_STARTUP?
+    CODE     002BH      01BAH     UNIT           ?PR?MAIN?MAIN
+    CODE     01E5H      0035H     UNIT           ?PR?_DELAY?MAIN
+    CODE     021AH      0010H     UNIT           ?PR?DELAY25MS?MAIN
+
+EXECUTABLE SUMMARY:
+-------------------
+    Total INTERNAL storage requirement:  0013H (19)
+    Total EXTERNAL storage requirement:  0000H (0)
+    Total   CODE   storage requirement:  022AH (554)
+Note:  Summary does not include dynamic stack requirements
+
+
+REFERENCE MAP OF MODULE: F:\P\ALC\VER5\ALC_V5.ABS (MAIN)
+
+SEGMENT
+   +-->CALLED SEGMENT
+---------------------
+?PR?MAIN?MAIN
+   +-->?PR?MAIN?MAIN
+   +-->?PR?_DELAY?MAIN
+
+?PR?_DELAY?MAIN
+   +-->?PR?LIB51
+
+
+SYMBOL TABLE FOR F:\P\ALC\VER5\ALC_V5.ABS(MAIN)
+------------------------------------------------
+
+    VALUE              TYPE               NAME
+    -----              ----               ----
+
+	-------            MODULE             MAIN
+	C:0000H            SYMBOL             _ICE_DUMMY_
+	C:002BH            PUBLIC             main
+	C:021AH            PUBLIC             Delay25ms
+	C:01E5H            PUBLIC             _Delay
+	D:000DH            PUBLIC             opto_status
+	D:000CH            PUBLIC             tog_status
+L51 CODE BANKING LINKER/LOCATOR V4.08.06          05/03/110  09:19:13  PAGE  2
+
+	D:000BH            PUBLIC             k
+	D:000AH            PUBLIC             bcdValue
+	D:0009H            PUBLIC             i
+	D:0008H            PUBLIC             state
+	B:0087H            SYMBOL             Opto2
+	B:0086H            SYMBOL             Opto1
+	B:0085H            SYMBOL             Close
+	B:0084H            SYMBOL             Open
+	B:0097H            SYMBOL             Relay2
+	B:0096H            SYMBOL             Relay1
+	B:0090H            SYMBOL             Red
+	B:0091H            SYMBOL             Green
+	B:0092H            SYMBOL             Orange
+	B:00D0H            SYMBOL             P
+	B:00D2H            SYMBOL             OV
+	B:00D3H            SYMBOL             RS0
+	B:00D4H            SYMBOL             RS1
+	B:00D5H            SYMBOL             F0
+	B:00D6H            SYMBOL             AC
+	B:00D7H            SYMBOL             CY
+	B:00B0H            SYMBOL             RXD
+	B:00B1H            SYMBOL             TXD
+	B:00B2H            SYMBOL             INT0
+	B:00B3H            SYMBOL             INT1
+	B:00B4H            SYMBOL             T0
+	B:00B5H            SYMBOL             T1
+	B:00B6H            SYMBOL             WR
+	B:00B7H            SYMBOL             RD
+	B:00B8H            SYMBOL             PX0
+	B:00B9H            SYMBOL             PT0
+	B:00BAH            SYMBOL             PX1
+	B:00BBH            SYMBOL             PT1
+	B:00BCH            SYMBOL             PS
+	B:00A8H            SYMBOL             EX0
+	B:00A9H            SYMBOL             ET0
+	B:00AAH            SYMBOL             EX1
+	B:00ABH            SYMBOL             ET1
+	B:00ACH            SYMBOL             ES
+	B:00AFH            SYMBOL             EA
+	B:0098H            SYMBOL             RI
+	B:0099H            SYMBOL             TI
+	B:009AH            SYMBOL             RB8
+	B:009BH            SYMBOL             TB8
+	B:009CH            SYMBOL             REN
+	B:009DH            SYMBOL             SM2
+	B:009EH            SYMBOL             SM1
+	B:009FH            SYMBOL             SM0
+	B:0088H            SYMBOL             IT0
+	B:0089H            SYMBOL             IE0
+	B:008AH            SYMBOL             IT1
+	B:008BH            SYMBOL             IE1
+	B:008CH            SYMBOL             TR0
+	B:008DH            SYMBOL             TF0
+	B:008EH            SYMBOL             TR1
+	B:008FH            SYMBOL             TF1
+	D:00F0H            SYMBOL             B
+	D:00E0H            SYMBOL             ACC
+	D:00D0H            SYMBOL             PSW
+	D:00B8H            SYMBOL             IP
+	D:00B0H            SYMBOL             P3
+	D:00A8H            SYMBOL             IE
+	D:00A0H            SYMBOL             P2
+	D:0099H            SYMBOL             SBUF
+	D:0098H            SYMBOL             SCON
+	D:0090H            SYMBOL             P1
+	D:008DH            SYMBOL             TH1
+	D:008CH            SYMBOL             TH0
+	D:008BH            SYMBOL             TL1
+L51 CODE BANKING LINKER/LOCATOR V4.08.06          05/03/110  09:19:13  PAGE  3
+
+	D:008AH            SYMBOL             TL0
+	D:0089H            SYMBOL             TMOD
+	D:0088H            SYMBOL             TCON
+	D:0087H            SYMBOL             PCON
+	D:0083H            SYMBOL             DPH
+	D:0082H            SYMBOL             DPL
+	D:0081H            SYMBOL             SP
+	D:0080H            SYMBOL             P0
+	-------            PROC               MAIN
+	C:002BH            LINE#              51
+	C:002BH            LINE#              51
+	C:002BH            LINE#              54
+	C:002EH            LINE#              55
+	C:0031H            LINE#              58
+	C:0033H            LINE#              59
+	C:0035H            LINE#              60
+	C:0037H            LINE#              61
+	C:0039H            LINE#              62
+	C:003BH            LINE#              65
+	C:003EH            LINE#              69
+	C:0048H            LINE#              70
+	C:004BH            LINE#              69
+	C:004FH            LINE#              71
+	C:0051H            LINE#              72
+	C:0053H            LINE#              73
+	C:0055H            LINE#              75
+	C:005FH            LINE#              76
+	C:0062H            LINE#              69
+	C:0066H            LINE#              77
+	C:0068H            LINE#              78
+	C:006AH            LINE#              79
+	C:006CH            LINE#              81
+	C:0076H            LINE#              82
+	C:0079H            LINE#              69
+	C:007DH            LINE#              83
+	C:007FH            LINE#              84
+	C:0081H            LINE#              85
+	C:0083H            LINE#              87
+	C:008DH            LINE#              88
+	C:0090H            LINE#              69
+	C:0094H            LINE#              89
+	C:0096H            LINE#              90
+	C:0098H            LINE#              91
+	C:009AH            LINE#              93
+	C:009DH            LINE#              94
+	C:009DH            LINE#              52
+	C:009DH            LINE#              96
+	C:00A3H            LINE#              97
+	C:00A9H            LINE#              98
+	C:00E2H            LINE#              52
+	C:00E2H            LINE#              105
+	C:00E5H            LINE#              106
+	C:00EBH            LINE#              107
+	C:00EEH            LINE#              108
+	C:00F4H            LINE#              110
+	C:00F7H            LINE#              111
+	C:00F9H            LINE#              113
+	C:00FCH            LINE#              52
+	C:00FCH            LINE#              116
+	C:00FEH            LINE#              118
+	C:0108H            LINE#              119
+	C:010BH            LINE#              69
+	C:010FH            LINE#              122
+	C:0112H            LINE#              123
+	C:0118H            LINE#              125
+	C:011BH            LINE#              126
+	C:011DH            LINE#              128
+	C:0120H            LINE#              52
+L51 CODE BANKING LINKER/LOCATOR V4.08.06          05/03/110  09:19:13  PAGE  4
+
+	C:0120H            LINE#              131
+	C:0125H            LINE#              132
+	C:012BH            LINE#              134
+	C:012DH            LINE#              136
+	C:0137H            LINE#              137
+	C:013AH            LINE#              69
+	C:013EH            LINE#              140
+	C:0144H            LINE#              141
+	C:014AH            LINE#              143
+	C:014DH            LINE#              144
+	C:0150H            LINE#              146
+	C:0152H            LINE#              147
+	C:0154H            LINE#              148
+	C:0156H            LINE#              149
+	C:0159H            LINE#              150
+	C:015CH            LINE#              152
+	C:015CH            LINE#              154
+	C:015FH            LINE#              52
+	C:015FH            LINE#              157
+	C:0161H            LINE#              159
+	C:016BH            LINE#              160
+	C:016EH            LINE#              69
+	C:0172H            LINE#              162
+	C:0175H            LINE#              52
+	C:0175H            LINE#              165
+	C:0177H            LINE#              167
+	C:0181H            LINE#              168
+	C:0184H            LINE#              69
+	C:0188H            LINE#              171
+	C:018EH            LINE#              172
+	C:0193H            LINE#              174
+	C:0196H            LINE#              175
+	C:0199H            LINE#              177
+	C:019BH            LINE#              178
+	C:019DH            LINE#              179
+	C:019FH            LINE#              180
+	C:01A2H            LINE#              181
+	C:01A5H            LINE#              183
+	C:01A7H            LINE#              184
+	C:01A9H            LINE#              185
+	C:01ABH            LINE#              186
+	C:01AEH            LINE#              187
+	C:01B1H            LINE#              189
+	C:01BDH            LINE#              190
+	C:01C2H            LINE#              191
+	C:01CEH            LINE#              192
+	C:01D3H            LINE#              194
+	C:01D6H            LINE#              195
+	C:01D9H            LINE#              197
+	C:01DCH            LINE#              198
+	C:01DFH            LINE#              199
+	C:01E2H            LINE#              200
+	C:01E2H            LINE#              202
+	C:01E2H            LINE#              205
+	-------            ENDPROC            MAIN
+	-------            PROC               _DELAY
+	D:000EH            SYMBOL             d
+	D:0011H            SYMBOL             p
+	D:000FH            SYMBOL             Cnt200Ms
+	C:01E5H            LINE#              207
+	C:01E5H            LINE#              207
+	C:01E7H            LINE#              212
+	C:01FBH            LINE#              213
+	C:020CH            LINE#              214
+	C:020FH            LINE#              213
+	C:0219H            LINE#              215
+	-------            ENDPROC            _DELAY
+	-------            PROC               DELAY25MS
+L51 CODE BANKING LINKER/LOCATOR V4.08.06          05/03/110  09:19:13  PAGE  5
+
+	C:021AH            LINE#              216
+	C:021AH            LINE#              216
+	C:021AH            LINE#              218
+	C:021DH            LINE#              219
+	C:0220H            LINE#              220
+	C:0222H            LINE#              221
+	C:0225H            LINE#              222
+	C:0227H            LINE#              223
+	C:0229H            LINE#              224
+	-------            ENDPROC            DELAY25MS
+	-------            ENDMOD             MAIN
+	-------            MODULE             SAJJAD
+	C:0000H            SYMBOL             _ICE_DUMMY_
+	-------            ENDMOD             SAJJAD
+	C:001CH            PUBLIC             ?C_START3
+	C:0003H            PUBLIC             ?C_IMULX
+	C:0008H            PUBLIC             ?C_IMUL
+	N:00FFH            PUBLIC             IDATALEN
+	N:00FFH            PUBLIC             _INITP2?
+
+LINK/LOCATE RUN COMPLETE,  NO ERROR FOUND.

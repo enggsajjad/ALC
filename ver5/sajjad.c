@@ -1,0 +1,53 @@
+/************************************************************************
+
+ON/OPEN SEQUENCE
+----------------
+1.	Operate Relay1(SOV) ON
+2.	Wait for 2 Sec				????
+3.	If Opto1(SOV ON_SEQ feedback=ON) proceed else indicate FAULT
+4.	Delay based upon the BCD switch
+5. 	Operate Relay2(EV) ON
+6.	Wait for 2 Sec				????
+7.	If Opto1(SOV ON_SEQ feedback=ON) and Opto2(SOV OFF_SEQ feedback=OFF) 
+	proceed else indicate FAULT
+8.	Indicate the completion of ON sequence by RED led
+
+
+OFF/CLOSE SEQUENCE
+----------------
+1.	Operate Relay2(EV) = OFF
+2.	Wait for 2 Sec				????
+3.	Operate Relay1(SOV) = OFF
+4.	Wait for 2 Sec				????
+5. 	If Opto1(SOV ON_SEQ feedback=OFF) and Opto2(SOV OFF_SEQ feedback=ON) 
+	proceed else indicate FAULT
+6.	Indicate the completion of ON sequence by GREEN led
+
+
+
+		by:
+			SAJJAD HUSSAIN
+			21-01-2010
+************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

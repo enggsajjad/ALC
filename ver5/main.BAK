@@ -1,0 +1,245 @@
+/*
+  	SAJJAD HUSSAIN, SE,
+  	Date: 13-10-09
+  	Without Watchdog Timer
+  	
+  	Changed:
+  		When Toggle Switch Changes; ringing is handled
+  		Close and Open intervhanged
+  		Green and Red LED interchanged
+  	changed:	
+  		DATE: 22-01-2010
+  		whole sequence changed
+  		
+*/
+#include <reg51.h>
+
+#define OPTO_ON		0
+#define OPTO_OFF		1
+#define LED_ON			0
+#define LED_OFF		1
+#define RELAY_ON		1
+#define RELAY_OFF		0
+
+////////		PINS
+sbit Orange = P1^2;
+sbit Green = P1^1;
+sbit Red = P1^0;
+sbit Relay1 = P1^6;
+sbit Relay2 = P1^7;
+sbit Open = P0^4;
+sbit Close =  P0^5;
+sbit Opto1 = P0^6;
+sbit Opto2 = P0^7;
+
+////////		VARIABLES
+//bit OpenStatus=0;
+//bit CloseStatus=0;
+unsigned char state=0;
+unsigned char i;
+unsigned char bcdValue=0;
+unsigned char k;
+unsigned char tog_status;
+unsigned char opto_status;
+
+////////		FUNCTION HEADERS
+void Delay(unsigned char d);
+void Delay25ms(void);
+
+
+////////		MAIN PROGRAMM
+void main(void)
+{
+	// Set the outports as i/o
+	P0 = 0xFF;// Input Port
+	P1 = 0x00;// Output Port
+	
+	// Off all the peripherals
+	Orange = LED_OFF;
+	Green = LED_OFF;
+	Red = LED_OFF;
+	Relay1 = RELAY_OFF;
+	Relay2 = RELAY_OFF;
+	
+	// Timers in Mode1 - 16 Bit Mode
+   TMOD = 0x11;
+   
+   // Power On LED Blinking
+   //wait for 2 sec
+	for(k=0;k<20;k++)
+		Delay25ms();
+   Orange = LED_ON;
+	Green = LED_ON;
+	Red = LED_ON;
+	//wait for 2 sec
+	for(k=0;k<20;k++)
+		Delay25ms();
+   Orange = LED_OFF;
+	Green = LED_OFF;
+	Red = LED_OFF;
+	//wait for 2 sec
+	for(k=0;k<20;k++)
+		Delay25ms();
+   Orange = LED_ON;
+	Green = LED_ON;
+	Red = LED_ON;
+	//wait for 2 sec
+	for(k=0;k<20;k++)
+		Delay25ms();
+   Orange = LED_OFF;
+	Green = LED_OFF;
+	Red = LED_OFF;
+	
+	// Check the Open or Close Line
+	//if(Close)
+	//	Green = LED_ON;
+	//else if(Open)
+	//	Red = LED_ON;
+	//else
+	//	Orange = LED_ON;
+   // Run the State Machine Forever
+	state = 1;
+	while(1)
+	{
+   	opto_status = P0&0xC0;
+   	tog_status = P0&0x30;
+   	switch(state)
+   	{
+   	 	case 1:
+   	 		//Read Toggle switch status
+   	 		//OpenStatus = Open;
+   	 		//CloseStatus = Close;
+   	 		// Check the Position of Toggle Switch
+   	 		if(Open==0)			//execute on/open sequence
+   	 			state = 2;
+   	 		else if(Close==0)	//execute off/close sequence
+   	 			state = 6;
+   	 		else
+   	 			state = 9;		//execute an error
+   	 		break;
+   	 	case 2:
+	   		if(Relay1==RELAY_OFF)
+	   		{
+	   			//Operat Relay1
+		   		Relay1 = RELAY_ON;
+		   		//wait for 2 sec
+					for(k=0;k<80;k++)
+						Delay25ms();
+	   		}
+				// Read Opto1 Status
+		   	if(Opto1==OPTO_ON)
+	   			state = 3;
+	   		else
+	   			state = 9;
+   	 		break;
+   	 	case 3:
+				if(Relay2==RELAY_OFF)
+	   		{
+					//Delay as per table 1
+					bcdValue = ~P0;
+	   			Delay(bcdValue&0x0F);
+					//Operat Relay 2
+					Relay2 = RELAY_ON;
+					//wait for 2 sec
+					for(k=0;k<80;k++)
+						Delay25ms();
+				}
+				// Read Opto2 Status
+				if((Opto1==OPTO_ON) && (Opto2==OPTO_OFF))
+					state = 4;
+				else
+					state = 9;
+   	 		break;
+   	 	case 4:// on sequence completed
+				Green = LED_OFF;
+				Red = LED_ON;
+				Orange = LED_OFF;
+				state = 10;
+				break;
+   	 	case 5:
+   	 		break;
+   	 	case 6:
+				if(Relay2==RELAY_ON)
+	   		{
+					//Operat Relay 2
+					Relay2 = RELAY_OFF;
+					//wait for 2 sec
+					for(k=0;k<80;k++)
+						Delay25ms();
+				}
+				if(Relay1==RELAY_ON)
+	   		{
+					//Operat Relay 2
+					Relay1 = RELAY_OFF;
+					//wait for 2 sec
+					for(k=0;k<80;k++)
+						Delay25ms();
+				}
+				// Read Opto1 Status
+				if((Opto1==OPTO_OFF) && (Opto2==OPTO_ON))
+					state = 8;
+				else
+					state = 9;
+   	 		break;
+   	 	case 8:// off sequence completed
+   	 		Green = LED_ON;
+   	 		Red = LED_OFF;
+   	 		Orange = LED_OFF;
+   	 		state = 10;
+   	 		break;
+   	 	case 9:// fault/error condition
+   	 		Orange = LED_ON;
+   	 		Green = LED_OFF;
+   	 		Red = LED_OFF;
+   	 		state = 10;
+   	 		break;
+			case 10:
+				//if((OpenStatus==Open)&&(CloseStatus==Close))
+				//	state = 10;
+				//else
+				//	state = 11;
+				if (tog_status != (P0&0x30))
+					state = 11;
+				else if (opto_status != (P0&0xC0))
+					state = 11;
+				else
+					state = 10;
+   	 		break;
+   	 	case 11:
+   	 		Delay25ms();
+   	 		Delay25ms();
+   	 		state = 1;
+   	 		break;
+   	 	case 12:
+   	 		break;
+   	}
+	}//while
+}//main
+////////		FUNCTION DEFINITIONS
+void Delay(unsigned char d)
+{
+ unsigned int p;
+ unsigned int Cnt200Ms;
+ 
+ Cnt200Ms = (d+1)*200;
+ for(p=0;p<Cnt200Ms;p++)
+ 	Delay25ms();
+}
+void Delay25ms(void)
+{
+	TL0 = 0xAF;//25ms
+	TH0 = 0x3C;
+	TR0 = 1;
+	while(!TF0);
+	TR0 = 0;
+	TF0 = 0;
+}
+
+
+
+
+
+
+
+
+

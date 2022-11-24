@@ -1,0 +1,93 @@
+C51 COMPILER V6.11.3B,  README                    05/03/110  09:18:09  PAGE  1
+
+QCW(0x00002D1A)
+
+WIN32 C51 COMPILER V6.11.3B, COMPILATION OF MODULE README    
+OBJECT MODULE PLACED IN f:\p\alc\ver5\readme.obj
+COMPILER INVOKED BY: C51.EXE F:\P\ALC\VER5\README.C OBJECT(F:\P\ALC\VER5\README.
+            -OBJ) PIN(C:\FSI\INC) NOAM PR(F:\P\ALC\VER5\README.LST) CD SB OE(1) 
+            -SM FP(NOFLOAT) PW(80) 
+
+stmt level    source
+   1          /*****************************************************************
+            -*******
+   2          
+   3          ON/OPEN SEQUENCE
+   4          ----------------
+   5          1.	Operate Relay1(SOV) ON
+   6          2.	Wait for 2 Sec				????
+   7          3.	If Opto1(SOV ON_SEQ feedback=ON) proceed else indicate FAULT
+   8          4.	Delay based upon the BCD switch
+   9          5. 	Operate Relay2(EV) ON
+  10          6.	Wait for 2 Sec				????
+  11          7.	If Opto1(SOV ON_SEQ feedback=ON) and Opto2(SOV OFF_SEQ feedback
+            -=OFF) 
+  12          	proceed else indicate FAULT
+  13          8.	Indicate the completion of ON sequence by RED led
+  14          
+  15          
+  16          OFF/CLOSE SEQUENCE
+  17          ----------------
+  18          1.	Operate Relay2(EV) = OFF
+  19          2.	Wait for 2 Sec				????
+  20          3.	Operate Relay1(SOV) = OFF
+  21          4.	Wait for 2 Sec				????
+  22          5. 	If Opto1(SOV ON_SEQ feedback=OFF) and Opto2(SOV OFF_SEQ feedba
+            -ck=ON) 
+  23          	proceed else indicate FAULT
+  24          6.	Indicate the completion of ON sequence by GREEN led
+  25          
+  26          
+  27          
+  28          		by:
+  29          			SAJJAD HUSSAIN
+  30          			21-01-2010
+  31          ******************************************************************
+            -******/
+  32          
+  33          
+  34          
+  35          
+  36          
+  37          
+  38          
+  39          
+  40          
+  41          
+  42          
+  43          
+  44          
+  45          
+  46          
+  47          
+  48          
+  49          
+  50          
+  51          
+  52          
+  53          
+  54          
+C51 COMPILER V6.11.3B,  README                    05/03/110  09:18:09  PAGE  2
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+C51 COMPILER V6.11.3B,  README                    05/03/110  09:18:09  PAGE  3
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+C51 COMPILER V6.11.3B,  README                    05/03/110  09:18:09  PAGE  4
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILATION COMPLETE.  0 WARNING,  0 ERROR

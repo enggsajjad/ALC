@@ -1,0 +1,23 @@
+WIN32 L51 CODE BANKING LINKER/LOCATOR V4.08.06,  INVOKED BY: 
+L51.EXE f:\p\alc\ver5\main.OBJ,f:\p\sdas_tester\sdas_tt1\sajjad.OBJ  to  F:\P\ALC\VER5\ALC_V5.ABS PR(F:\P\ALC\VER5\ALC_V5.M51) SN(1066142959415E46769E694) PW(80) RS(256) ix 
+
+INTER-MODULE CROSS-REFERENCE LISTING
+------------------------------------
+
+    NAME. . . . . . . . USAGE   MODULE NAMES
+    ----------------------------------------
+    ?C_IMUL . . . . . . CODE    [MULS]:  MAIN 
+    ?C_IMULX  . . . . . CODE    [MULS]: 
+    ?C_START3 . . . . . CODE    [C3S]:  MAIN 
+    BCDVALUE  . . . . . DATA    [MAIN]: 
+    DELAY25MS . . . . . CODE    [MAIN]:  MAIN 
+    I . . . . . . . . . DATA    [MAIN]: 
+    IDATALEN  . . . . .         [_C_IDATALEN]:  C3S 
+    K . . . . . . . . . DATA    [MAIN]: 
+    MAIN  . . . . . . . CODE    [MAIN]:  C3S 
+    OPTO_STATUS . . . . DATA    [MAIN]: 
+    STATE . . . . . . . DATA    [MAIN]: 
+    TOG_STATUS  . . . . DATA    [MAIN]: 
+    _DELAY  . . . . . . CODE    [MAIN]:  MAIN 
+    _INITP2?  . . . . .         [_C_IDATALEN]:  C3S 
+    _STACK  . . . . . . IDATA   [MAIN]:  C3S 

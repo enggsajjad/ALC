@@ -1,0 +1,672 @@
+C51 COMPILER V6.11.3B,  MAIN                      05/03/110  09:19:13  PAGE  1
+
+QCW(0x00002D1A)
+
+WIN32 C51 COMPILER V6.11.3B, COMPILATION OF MODULE MAIN      
+OBJECT MODULE PLACED IN f:\p\alc\ver5\main.obj
+COMPILER INVOKED BY: C51.EXE F:\P\ALC\VER5\MAIN.C OBJECT(F:\P\ALC\VER5\MAIN.OBJ)
+            - PIN(C:\FSI\INC) NOAM PR(F:\P\ALC\VER5\MAIN.LST) CD SB OE(1) SM FP(
+            -NOFLOAT) PW(80) 
+
+stmt level    source
+   1          /*
+   2            	SAJJAD HUSSAIN, SE,
+   3            	Date: 13-10-09
+   4            	Without Watchdog Timer
+   5            	
+   6            	Changed:
+   7            		When Toggle Switch Changes; ringing is handled
+   8            		Close and Open intervhanged
+   9            		Green and Red LED interchanged
+  10            	changed:	
+  11            		DATE: 22-01-2010
+  12            		whole sequence changed
+  13            		
+  14          */
+  15          #include <reg51.h>
+  16          
+  17          #define OPTO_ON		0
+  18          #define OPTO_OFF		1
+  19          #define LED_ON			0
+  20          #define LED_OFF		1
+  21          #define RELAY_ON		1
+  22          #define RELAY_OFF		0
+  23          
+  24          ////////		PINS
+  25          sbit Orange = P1^2;
+  26          sbit Green = P1^1;
+  27          sbit Red = P1^0;
+  28          sbit Relay1 = P1^6;
+  29          sbit Relay2 = P1^7;
+  30          sbit Open = P0^4;
+  31          sbit Close =  P0^5;
+  32          sbit Opto1 = P0^6;
+  33          sbit Opto2 = P0^7;
+  34          
+  35          ////////		VARIABLES
+  36          //bit OpenStatus=0;
+  37          //bit CloseStatus=0;
+  38          unsigned char state=0;
+  39          unsigned char i;
+  40          unsigned char bcdValue=0;
+  41          unsigned char k;
+  42          unsigned char tog_status;
+  43          unsigned char opto_status;
+  44          
+  45          ////////		FUNCTION HEADERS
+  46          void Delay(unsigned char d);
+  47          void Delay25ms(void);
+  48          
+  49          
+  50          ////////		MAIN PROGRAMM
+  51          void main(void)
+  52          {
+  53   1      	// Set the outports as i/o
+  54   1      	P0 = 0xFF;// Input Port
+  55   1      	P1 = 0x00;// Output Port
+  56   1      	
+  57   1      	// Off all the peripherals
+  58   1      	Orange = LED_OFF;
+  59   1      	Green = LED_OFF;
+  60   1      	Red = LED_OFF;
+  61   1      	Relay1 = RELAY_OFF;
+  62   1      	Relay2 = RELAY_OFF;
+  63   1      	
+  64   1      	// Timers in Mode1 - 16 Bit Mode
+  65   1         TMOD = 0x11;
+  66   1         
+  67   1         // Power On LED Blinking
+  68   1         //wait for 2 sec
+  69   1      	for(k=0;k<20;k++)
+  70   1      		Delay25ms();
+  71   1         Orange = LED_ON;
+  72   1      	Green = LED_ON;
+  73   1      	Red = LED_ON;
+  74   1      	//wait for 2 sec
+  75   1      	for(k=0;k<20;k++)
+  76   1      		Delay25ms();
+  77   1         Orange = LED_OFF;
+  78   1      	Green = LED_OFF;
+  79   1      	Red = LED_OFF;
+  80   1      	//wait for 2 sec
+  81   1      	for(k=0;k<20;k++)
+  82   1      		Delay25ms();
+  83   1         Orange = LED_ON;
+  84   1      	Green = LED_ON;
+  85   1      	Red = LED_ON;
+  86   1      	//wait for 2 sec
+  87   1      	for(k=0;k<20;k++)
+  88   1      		Delay25ms();
+  89   1         Orange = LED_OFF;
+  90   1      	Green = LED_OFF;
+  91   1      	Red = LED_OFF;
+  92   1      	
+  93   1      	state = 1;
+  94   1      	while(1)
+  95   1      	{
+  96   2         	opto_status = P0&0xC0;
+  97   2         	tog_status = P0&0x30;
+  98   2         	switch(state)
+  99   2         	{
+ 100   3         	 	case 1:
+ 101   3         	 		//Read Toggle switch status
+ 102   3         	 		//OpenStatus = Open;
+ 103   3         	 		//CloseStatus = Close;
+ 104   3         	 		// Check the Position of Toggle Switch
+ 105   3         	 		if(Open==0)			//execute on/open sequence
+ 106   3         	 			state = 2;
+ 107   3         	 		else if(Close==0)	//execute off/close sequence
+ 108   3         	 			state = 6;
+ 109   3         	 		else
+ 110   3         	 			state = 9;		//execute an error
+ 111   3         	 		break;
+ 112   3         	 	case 2:
+ 113   3      	   		if(Relay1==RELAY_OFF)
+ 114   3      	   		{
+ 115   4      	   			//Operat Relay1
+ 116   4      		   		Relay1 = RELAY_ON;
+ 117   4      		   		//wait for 2 sec
+ 118   4      					for(k=0;k<80;k++)
+ 119   4      						Delay25ms();
+ 120   4      	   		}
+ 121   3      				// Read Opto1 Status
+ 122   3      		   	if(Opto1==OPTO_ON)
+ 123   3      	   			state = 3;
+ 124   3      	   		else
+ 125   3      	   			state = 9;
+ 126   3         	 		break;
+ 127   3         	 	case 3:
+ 128   3      				if(Relay2==RELAY_OFF)
+ 129   3      	   		{
+ 130   4      					//Delay as per table 1
+ 131   4      					bcdValue = ~P0;
+ 132   4      	   			Delay(bcdValue&0x0F);
+ 133   4      					//Operat Relay 2
+ 134   4      					Relay2 = RELAY_ON;
+ 135   4      					//wait for 2 sec
+ 136   4      					for(k=0;k<80;k++)
+ 137   4      						Delay25ms();
+ 138   4      				}
+ 139   3      				// Read Opto2 Status
+ 140   3      				if((Opto1==OPTO_ON) && (Opto2==OPTO_OFF))
+ 141   3      					state = 4;
+ 142   3      				else
+ 143   3      					state = 9;
+ 144   3         	 		break;
+ 145   3         	 	case 4:// on sequence completed
+ 146   3      				Green = LED_OFF;
+ 147   3      				Red = LED_ON;
+ 148   3      				Orange = LED_OFF;
+ 149   3      				state = 10;
+ 150   3      				break;
+ 151   3         	 	case 5:
+ 152   3         	 		break;
+ 153   3         	 	case 6:
+ 154   3      				if(Relay2==RELAY_ON)
+ 155   3      	   		{
+ 156   4      					//Operat Relay 2
+ 157   4      					Relay2 = RELAY_OFF;
+ 158   4      					//wait for 2 sec
+ 159   4      					for(k=0;k<80;k++)
+ 160   4      						Delay25ms();
+ 161   4      				}
+ 162   3      				if(Relay1==RELAY_ON)
+ 163   3      	   		{
+ 164   4      					//Operat Relay 2
+ 165   4      					Relay1 = RELAY_OFF;
+ 166   4      					//wait for 2 sec
+ 167   4      					for(k=0;k<80;k++)
+ 168   4      						Delay25ms();
+ 169   4      				}
+ 170   3      				// Read Opto1 Status
+ 171   3      				if((Opto1==OPTO_OFF) && (Opto2==OPTO_ON))
+ 172   3      					state = 8;
+ 173   3      				else
+ 174   3      					state = 9;
+ 175   3         	 		break;
+ 176   3         	 	case 8:// off sequence completed
+ 177   3         	 		Green = LED_ON;
+ 178   3         	 		Red = LED_OFF;
+ 179   3         	 		Orange = LED_OFF;
+ 180   3         	 		state = 10;
+ 181   3         	 		break;
+ 182   3         	 	case 9:// fault/error condition
+ 183   3         	 		Orange = LED_ON;
+ 184   3         	 		Green = LED_OFF;
+ 185   3         	 		Red = LED_OFF;
+ 186   3         	 		state = 10;
+ 187   3         	 		break;
+ 188   3      			case 10:
+ 189   3      				if (tog_status != (P0&0x30))
+ 190   3      					state = 11;
+ 191   3      				else if (opto_status != (P0&0xC0))
+ 192   3      					state = 11;
+ 193   3      				else
+ 194   3      					state = 10;
+ 195   3         	 		break;
+ 196   3         	 	case 11:
+ 197   3         	 		Delay25ms();
+ 198   3         	 		Delay25ms();
+ 199   3         	 		state = 1;
+ 200   3         	 		break;
+ 201   3         	 	case 12:
+ 202   3         	 		break;
+ 203   3         	}
+ 204   2      	}//while
+ 205   1      }//main
+ 206          ////////		FUNCTION DEFINITIONS
+ 207          void Delay(unsigned char d)
+ 208          {
+ 209   1       unsigned int p;
+ 210   1       unsigned int Cnt200Ms;
+ 211   1       
+ 212   1       Cnt200Ms = (d+1)*200;
+ 213   1       for(p=0;p<Cnt200Ms;p++)
+ 214   1       	Delay25ms();
+ 215   1      }
+ 216          void Delay25ms(void)
+ 217          {
+ 218   1      	TL0 = 0xAF;//25ms
+ 219   1      	TH0 = 0x3C;
+ 220   1      	TR0 = 1;
+ 221   1      	while(!TF0);
+ 222   1      	TR0 = 0;
+ 223   1      	TF0 = 0;
+ 224   1      }
+ 225          
+ 226          
+ 227          
+ 228          
+ 229          
+ 230          
+ 231          
+ 232          
+ 233          
+ 234          
+ 235          
+C51 COMPILER V6.11.3B,  MAIN                      05/03/110  09:19:13  PAGE  2
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+            ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 54 
+0000 7580FF         MOV    P0,#0FFH
+                                           ; SOURCE LINE # 55 
+0003 759000         MOV    P1,#000H
+                                           ; SOURCE LINE # 58 
+0006 D292           SETB   Orange
+                                           ; SOURCE LINE # 59 
+0008 D291           SETB   Green
+                                           ; SOURCE LINE # 60 
+000A D290           SETB   Red
+                                           ; SOURCE LINE # 61 
+000C C296           CLR    Relay1
+                                           ; SOURCE LINE # 62 
+000E C297           CLR    Relay2
+                                           ; SOURCE LINE # 65 
+0010 758911         MOV    TMOD,#011H
+                                           ; SOURCE LINE # 69 
+0013 750000  R      MOV    k,#000H
+0016         ?FOR8:
+0016 E500    R      MOV    A,k
+0018 B41400         CJNE   A,#014H,?LAB24
+001B         ?LAB24:
+001B 5007           JNC    ?NXT29
+                                           ; SOURCE LINE # 70 
+001D 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+0020 0500    R      INC    k
+0022 80F2           SJMP   ?FOR8
+0024         ?NXT29:
+                                           ; SOURCE LINE # 71 
+0024 C292           CLR    Orange
+                                           ; SOURCE LINE # 72 
+0026 C291           CLR    Green
+                                           ; SOURCE LINE # 73 
+0028 C290           CLR    Red
+                                           ; SOURCE LINE # 75 
+002A 750000  R      MOV    k,#000H
+002D         ?FOR9:
+002D E500    R      MOV    A,k
+002F B41400         CJNE   A,#014H,?LAB26
+0032         ?LAB26:
+0032 5007           JNC    ?NXT31
+                                           ; SOURCE LINE # 76 
+0034 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+0037 0500    R      INC    k
+0039 80F2           SJMP   ?FOR9
+003B         ?NXT31:
+                                           ; SOURCE LINE # 77 
+003B D292           SETB   Orange
+                                           ; SOURCE LINE # 78 
+003D D291           SETB   Green
+                                           ; SOURCE LINE # 79 
+003F D290           SETB   Red
+                                           ; SOURCE LINE # 81 
+0041 750000  R      MOV    k,#000H
+0044         ?FOR10:
+0044 E500    R      MOV    A,k
+0046 B41400         CJNE   A,#014H,?LAB28
+0049         ?LAB28:
+0049 5007           JNC    ?NXT33
+                                           ; SOURCE LINE # 82 
+004B 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+004E 0500    R      INC    k
+0050 80F2           SJMP   ?FOR10
+0052         ?NXT33:
+                                           ; SOURCE LINE # 83 
+0052 C292           CLR    Orange
+                                           ; SOURCE LINE # 84 
+0054 C291           CLR    Green
+                                           ; SOURCE LINE # 85 
+0056 C290           CLR    Red
+                                           ; SOURCE LINE # 87 
+0058 750000  R      MOV    k,#000H
+005B         ?FOR11:
+005B E500    R      MOV    A,k
+005D B41400         CJNE   A,#014H,?LAB30
+0060         ?LAB30:
+0060 5007           JNC    ?NXT35
+                                           ; SOURCE LINE # 88 
+0062 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+0065 0500    R      INC    k
+0067 80F2           SJMP   ?FOR11
+0069         ?NXT35:
+                                           ; SOURCE LINE # 89 
+0069 D292           SETB   Orange
+                                           ; SOURCE LINE # 90 
+006B D291           SETB   Green
+                                           ; SOURCE LINE # 91 
+006D D290           SETB   Red
+                                           ; SOURCE LINE # 93 
+006F 750001  R      MOV    state,#001H
+0072         ?WHILE1:
+                                           ; SOURCE LINE # 96 
+0072 E580           MOV    A,P0
+0074 54C0           ANL    A,#0C0H
+0076 F500    R      MOV    opto_status,A
+                                           ; SOURCE LINE # 97 
+0078 E580           MOV    A,P0
+007A 5430           ANL    A,#030H
+007C F500    R      MOV    tog_status,A
+                                           ; SOURCE LINE # 98 
+007E E500    R      MOV    A,state
+0080 24FF           ADD    A,#0FFH
+0082 B40C00         CJNE   A,#00CH,?LAB33
+0085         ?LAB33:
+0085 4003           JC     $ + 5
+0087 020000  R      LJMP   ?NXT38
+008A FA             MOV    R2,A
+008B 23             RL     A
+008C 2A             ADD    A,R2
+008D 900000  R      MOV    DPTR,#?LAB34
+0090 73             JMP    @A+DPTR
+0091         ?LAB34:
+0091 020000  R      LJMP   ?CASE11
+0094 020000  R      LJMP   ?CASE12
+0097 020000  R      LJMP   ?CASE13
+009A 020000  R      LJMP   ?CASE14
+009D 020000  R      LJMP   ?NXT38
+00A0 020000  R      LJMP   ?CASE16
+00A3 020000  R      LJMP   ?NXT38
+00A6 020000  R      LJMP   ?CASE17
+00A9 020000  R      LJMP   ?CASE18
+00AC 020000  R      LJMP   ?CASE19
+00AF 020000  R      LJMP   ?CASE20
+00B2 020000  R      LJMP   ?NXT38
+00B5 80BB           SJMP   ?WHILE1
+00B7         ?CASE11:
+                                           ; SOURCE LINE # 105 
+00B7 208406         JB     Open,?ELSE11
+                                           ; SOURCE LINE # 106 
+00BA 750002  R      MOV    state,#002H
+00BD 020000  R      LJMP   ?NXT38
+00C0         ?ELSE11:
+                                           ; SOURCE LINE # 107 
+00C0 208506         JB     Close,?ELSE12
+                                           ; SOURCE LINE # 108 
+00C3 750006  R      MOV    state,#006H
+00C6 020000  R      LJMP   ?NXT38
+00C9         ?ELSE12:
+                                           ; SOURCE LINE # 110 
+00C9 750009  R      MOV    state,#009H
+                                           ; SOURCE LINE # 111 
+00CC 80A4           SJMP   ?WHILE1
+00CE         ?CASE12:
+                                           ; SOURCE LINE # 113 
+00CE 209613         JB     Relay1,?NXT41
+                                           ; SOURCE LINE # 116 
+00D1 D296           SETB   Relay1
+                                           ; SOURCE LINE # 118 
+00D3 750000  R      MOV    k,#000H
+00D6         ?FOR12:
+00D6 E500    R      MOV    A,k
+00D8 B45000         CJNE   A,#050H,?LAB35
+00DB         ?LAB35:
+00DB 5007           JNC    ?NXT41
+                                           ; SOURCE LINE # 119 
+00DD 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+00E0 0500    R      INC    k
+00E2 80F2           SJMP   ?FOR12
+00E4         ?NXT41:
+                                           ; SOURCE LINE # 122 
+00E4 208606         JB     Opto1,?ELSE14
+                                           ; SOURCE LINE # 123 
+00E7 750003  R      MOV    state,#003H
+00EA 020000  R      LJMP   ?NXT38
+00ED         ?ELSE14:
+                                           ; SOURCE LINE # 125 
+00ED 750009  R      MOV    state,#009H
+                                           ; SOURCE LINE # 126 
+00F0 8080           SJMP   ?WHILE1
+00F2         ?CASE13:
+                                           ; SOURCE LINE # 128 
+00F2 20971E         JB     Relay2,?NXT45
+                                           ; SOURCE LINE # 131 
+00F5 E580           MOV    A,P0
+00F7 F4             CPL    A
+00F8 F500    R      MOV    bcdValue,A
+                                           ; SOURCE LINE # 132 
+00FA 540F           ANL    A,#00FH
+00FC FF             MOV    R7,A
+00FD 120000  R      LCALL  _Delay
+                                           ; SOURCE LINE # 134 
+0100 D297           SETB   Relay2
+                                           ; SOURCE LINE # 136 
+0102 750000  R      MOV    k,#000H
+0105         ?FOR13:
+0105 E500    R      MOV    A,k
+0107 B45000         CJNE   A,#050H,?LAB37
+010A         ?LAB37:
+010A 5007           JNC    ?NXT45
+                                           ; SOURCE LINE # 137 
+010C 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+010F 0500    R      INC    k
+0111 80F2           SJMP   ?FOR13
+0113         ?NXT45:
+                                           ; SOURCE LINE # 140 
+0113 208609         JB     Opto1,?ELSE16
+0116 308706         JNB    Opto2,?ELSE16
+                                           ; SOURCE LINE # 141 
+0119 750004  R      MOV    state,#004H
+011C 020000  R      LJMP   ?NXT38
+011F         ?ELSE16:
+                                           ; SOURCE LINE # 143 
+011F 750009  R      MOV    state,#009H
+                                           ; SOURCE LINE # 144 
+0122 020000  R      LJMP   ?WHILE1
+0125         ?CASE14:
+                                           ; SOURCE LINE # 146 
+0125 D291           SETB   Green
+                                           ; SOURCE LINE # 147 
+0127 C290           CLR    Red
+                                           ; SOURCE LINE # 148 
+0129 D292           SETB   Orange
+                                           ; SOURCE LINE # 149 
+012B 75000A  R      MOV    state,#00AH
+                                           ; SOURCE LINE # 150 
+012E 020000  R      LJMP   ?WHILE1
+0131         ?CASE16:
+                                           ; SOURCE LINE # 154 
+0131 309713         JNB    Relay2,?NXT49
+                                           ; SOURCE LINE # 157 
+0134 C297           CLR    Relay2
+                                           ; SOURCE LINE # 159 
+0136 750000  R      MOV    k,#000H
+0139         ?FOR14:
+0139 E500    R      MOV    A,k
+013B B45000         CJNE   A,#050H,?LAB40
+013E         ?LAB40:
+013E 5007           JNC    ?NXT49
+                                           ; SOURCE LINE # 160 
+0140 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+0143 0500    R      INC    k
+0145 80F2           SJMP   ?FOR14
+0147         ?NXT49:
+                                           ; SOURCE LINE # 162 
+0147 309613         JNB    Relay1,?NXT52
+                                           ; SOURCE LINE # 165 
+014A C296           CLR    Relay1
+                                           ; SOURCE LINE # 167 
+014C 750000  R      MOV    k,#000H
+014F         ?FOR15:
+014F E500    R      MOV    A,k
+0151 B45000         CJNE   A,#050H,?LAB42
+0154         ?LAB42:
+0154 5007           JNC    ?NXT52
+                                           ; SOURCE LINE # 168 
+0156 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 69 
+0159 0500    R      INC    k
+015B 80F2           SJMP   ?FOR15
+015D         ?NXT52:
+                                           ; SOURCE LINE # 171 
+015D 308608         JNB    Opto1,?ELSE19
+0160 208705         JB     Opto2,?ELSE19
+                                           ; SOURCE LINE # 172 
+0163 750008  R      MOV    state,#008H
+0166 804F           SJMP   ?NXT38
+0168         ?ELSE19:
+                                           ; SOURCE LINE # 174 
+0168 750009  R      MOV    state,#009H
+                                           ; SOURCE LINE # 175 
+016B 020000  R      LJMP   ?WHILE1
+016E         ?CASE17:
+                                           ; SOURCE LINE # 177 
+016E C291           CLR    Green
+                                           ; SOURCE LINE # 178 
+0170 D290           SETB   Red
+                                           ; SOURCE LINE # 179 
+0172 D292           SETB   Orange
+                                           ; SOURCE LINE # 180 
+0174 75000A  R      MOV    state,#00AH
+                                           ; SOURCE LINE # 181 
+0177 020000  R      LJMP   ?WHILE1
+017A         ?CASE18:
+                                           ; SOURCE LINE # 183 
+017A C292           CLR    Orange
+                                           ; SOURCE LINE # 184 
+017C D291           SETB   Green
+                                           ; SOURCE LINE # 185 
+017E D290           SETB   Red
+                                           ; SOURCE LINE # 186 
+0180 75000A  R      MOV    state,#00AH
+                                           ; SOURCE LINE # 187 
+0183 020000  R      LJMP   ?WHILE1
+0186         ?CASE19:
+                                           ; SOURCE LINE # 189 
+0186 E580           MOV    A,P0
+0188 5430           ANL    A,#030H
+018A F5F0           MOV    B,A
+018C E500    R      MOV    A,tog_status
+018E 65F0           XRL    A,B
+0190 6005           JZ     ?ELSE20
+                                           ; SOURCE LINE # 190 
+0192 75000B  R      MOV    state,#00BH
+0195 8020           SJMP   ?NXT38
+0197         ?ELSE20:
+                                           ; SOURCE LINE # 191 
+0197 E580           MOV    A,P0
+0199 54C0           ANL    A,#0C0H
+019B F5F0           MOV    B,A
+019D E500    R      MOV    A,opto_status
+019F 65F0           XRL    A,B
+01A1 6005           JZ     ?ELSE21
+                                           ; SOURCE LINE # 192 
+01A3 75000B  R      MOV    state,#00BH
+01A6 800F           SJMP   ?NXT38
+01A8         ?ELSE21:
+                                           ; SOURCE LINE # 194 
+01A8 75000A  R      MOV    state,#00AH
+                                           ; SOURCE LINE # 195 
+01AB 020000  R      LJMP   ?WHILE1
+01AE         ?CASE20:
+                                           ; SOURCE LINE # 197 
+01AE 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 198 
+01B1 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 199 
+01B4 750001  R      MOV    state,#001H
+01B7         ?NXT38:
+                                           ; SOURCE LINE # 202 
+01B7 020000  R      LJMP   ?WHILE1
+
+            ; FUNCTION main (END)
+
+            ; FUNCTION _Delay (BEGIN)
+                                           ; SOURCE LINE # 214 
+0000 8F00    R      MOV    d,R7
+                                           ; SOURCE LINE # 212 
+0002 E500    R      MOV    A,d
+0004 2401           ADD    A,#001H
+0006 FF             MOV    R7,A
+0007 E4             CLR    A
+0008 3400           ADDC   A,#000H
+000A FE             MOV    R6,A
+000B E4             CLR    A
+000C FC             MOV    R4,A
+000D 7DC8           MOV    R5,#0C8H
+000F 120000  R      LCALL  ?C_IMUL
+0012 8E00    R      MOV    Cnt200Ms,R6
+0014 8F00    R      MOV    Cnt200Ms+01H,R7
+                                           ; SOURCE LINE # 213 
+0016 E4             CLR    A
+0017 F500    R      MOV    p,A
+0019 F500    R      MOV    p+01H,A
+001B         ?FOR17:
+001B E500    R      MOV    A,p
+001D B50005  R      CJNE   A,Cnt200Ms,?LAB52
+0020 E500    R      MOV    A,p+01H
+0022 B50000  R      CJNE   A,Cnt200Ms+01H,?LAB52
+0025         ?LAB52:
+0025 500D           JNC    ?NXT60
+                                           ; SOURCE LINE # 214 
+0027 120000  R      LCALL  Delay25ms
+                                           ; SOURCE LINE # 213 
+002A 0500    R      INC    p+01H
+002C E500    R      MOV    A,p+01H
+002E 70EB           JNZ    ?FOR17
+0030 0500    R      INC    p
+0032 80E7           SJMP   ?FOR17
+0034         ?NXT60:
+0034 22             RET    
+
+            ; FUNCTION _Delay (END)
+
+            ; FUNCTION Delay25ms (BEGIN)
+                                           ; SOURCE LINE # 218 
+0000 758AAF         MOV    TL0,#0AFH
+                                           ; SOURCE LINE # 219 
+0003 758C3C         MOV    TH0,#03CH
+                                           ; SOURCE LINE # 220 
+0006 D28C           SETB   TR0
+0008         ?WHILE3:
+                                           ; SOURCE LINE # 221 
+0008 308DFD         JNB    TF0,?WHILE3
+                                           ; SOURCE LINE # 222 
+000B C28C           CLR    TR0
+                                           ; SOURCE LINE # 223 
+000D C28D           CLR    TF0
+000F 22             RET    
+
+            ; FUNCTION Delay25ms (END)
+
+C51 COMPILER V6.11.3B,  MAIN                      05/03/110  09:19:13  PAGE  3
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+state. . . . . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0000H   1    
+i. . . . . . . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0001H   1    
+bcdValue . . . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0002H   1    
+k. . . . . . . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0003H   1    
+tog_status . . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0004H   1    
+opto_status. . . . . . . . . . . . . .  PUBLIC  DATA    BASE    0005H   1    
+main . . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+Delay. . . . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+  d?043. . . . . . . . . . . . . . . .  PARAM   DATA    BASE    0000H   1    
+  d?043. . . . . . . . . . . . . . . .  PARAM   DATA    BASE    0000H   1    
+p?044. . . . . . . . . . . . . . . . .  PUBLIC  DATA    U_INT  0003H   2    
+Cnt200Ms?045 . . . . . . . . . . . . .  PUBLIC  DATA    U_INT  0001H   2    
+Delay25ms. . . . . . . . . . . . . . .  PUBLIC  CODE    PROC    -----   -----
+C51 COMPILER V6.11.3B,  MAIN                      05/03/110  09:19:13  PAGE  4
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    511    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILATION COMPLETE.  0 WARNING,  0 ERROR
